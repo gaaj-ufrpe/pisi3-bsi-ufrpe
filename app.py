@@ -9,7 +9,11 @@ st.set_page_config(
 )
 
 nome = st.text_input('Nome')
-if nome != '':
-    st.markdown(f'Oi, {nome}. O STREAMLIT RODOU!')
-else:
+if nome == '':
     st.markdown('O STREAMLIT RODOU!')
+else:
+    st.markdown(f'''
+        Oi, <b style="color:#0033FF; text-transform:uppercase">{nome}</b>.<br>
+        O STREAMLIT RODOU!<br>
+        E ele aceita <code>HTML</code> e <code>CSS</code>!
+    ''', unsafe_allow_html=True)
