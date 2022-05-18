@@ -5,7 +5,7 @@
     <code>python -m pip install --upgrade pip</code>
   </li>
 
-  <li>Baixe este projeto e entre na pasta teste_streamlit</li>
+  <li>Baixe este projeto e descompacte o conteudo em uma pasta <code>teste_streamlit</code>. Entre na pasta.</li>
 
   <li>Execute:
     <code>pip install -r requirements.txt --upgrade</code>
