@@ -1,9 +1,17 @@
-numpy>=1.22.3
-pandas>=1.4.2
-plotly>=5.7.0
-python-dotenv>=0.20.0
-scipy>=1.8.0
-streamlit>=1.8.1
-toml>=0.10.2
-xlrd>=2.0.1
-openpyxl>=3.0.9
+<ol>
+  <li>Instale o python</li>
+
+  <li>Entre no terminal e execute:
+    <code>python -m pip install --upgrade pip</code>
+  </li>
+
+  <li>Baixe este projeto e entre na pasta teste_streamlit</li>
+
+  <li>Execute:
+    <code>pip install -r requirements.txt --upgrade</code>
+  </li>
+
+  <li>Execute:
+    <code>streamlit run app.py</code>
+  </li>
+<ol>
