@@ -1,3 +1,4 @@
+# Instalação
 <ol>
   <li>Instale o python</li>
 
@@ -15,3 +16,5 @@
     <code>streamlit run app.py</code>
   </li>
 <ol>
+
+# Tema
