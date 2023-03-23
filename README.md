@@ -12,6 +12,6 @@
   </li>
 
   <li>Execute:
-    <code>streamlit run app.py</code>
+    <code>streamlit run Home.py</code>
   </li>
 <ol>
