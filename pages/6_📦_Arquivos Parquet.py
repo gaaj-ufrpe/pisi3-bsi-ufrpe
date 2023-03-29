@@ -53,6 +53,8 @@ def build_body():
     times = col1.slider('Execuções', min_value=1, max_value=50, value=5)
     extensions = ['csv','parquet']
     selected_extensions = col2.multiselect('Extensões', options=extensions, default=extensions)
+    if len(selected_extensions)==0:
+        selected_extensions=extensions
     col1, col2, _ = st.columns([.2,.4,.5])
     button_placeholder = col1.empty()
     if button_placeholder.button('Executar'):
