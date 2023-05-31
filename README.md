@@ -14,6 +14,6 @@
   <li>Execute:
     <code>streamlit run app.py</code>
   </li>
-<ol>
+</ol>
 
 ##Disponível em: https://gaaj-ufrpe-teste-streamlit-home-profile-igxpg2.streamlit.app/
