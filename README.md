@@ -1,6 +1,7 @@
-## Teste Streamlit PISI3 - BSI - UFRPE
-# por: Gabriel Alves (gabriel.alves@ufrpe.br)
-# Instalação:
+# Teste Streamlit PISI3 - BSI - UFRPE
+por: Gabriel Alves (gabriel.alves@ufrpe.br)
+
+## Instalação:
 <ol>
   <li>Instale o python</li>
 
@@ -19,4 +20,4 @@
   </li>
 </ol>
 
-# Disponível em: https://gaaj-ufrpe-teste-streamlit-home-profile-igxpg2.streamlit.app/
+## Disponível em: https://gaaj-ufrpe-teste-streamlit-home-profile-igxpg2.streamlit.app/
