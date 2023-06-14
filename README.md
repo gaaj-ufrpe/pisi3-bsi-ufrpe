@@ -7,7 +7,9 @@ Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE p
 <ol>
   <li>Instale o python</li>
 
-  <li>python -m venv venv</li>
+  <li>Execute a linha abaixo para criar um ambiente virtual do python para o projeto. Observe que a pasta <code>venv</code> está no <code>.gitignore</code>.
+    <code>python -m venv venv</code>
+  </li>
 
   <li>Entre no terminal e execute:
     <code>python -m pip install --upgrade pip</code>
