@@ -7,6 +7,8 @@ Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE p
 <ol>
   <li>Instale o python</li>
 
+  <li>python -m venv venv</li>
+
   <li>Entre no terminal e execute:
     <code>python -m pip install --upgrade pip</code>
   </li>
