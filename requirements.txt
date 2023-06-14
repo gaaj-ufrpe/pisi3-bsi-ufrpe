@@ -1,3 +1,4 @@
 pandas>=1.5.3
-ydata-profiling>=4.1.1
-streamlit>=1.20.0
+streamlit>=1.23.1
+ydata-profiling>=4.2.0
+plotly>=5.15.0

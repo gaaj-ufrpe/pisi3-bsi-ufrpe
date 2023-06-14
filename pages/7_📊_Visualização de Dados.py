@@ -1,0 +1,70 @@
+import streamlit as st
+import plotly.express as px
+from utils import read_df
+
+def build_header():
+    text ='<h1>Visualização de Dados (Dataviz)</h1>'+\
+    '''<p>Esta página apresenta alguns gráficos a partir da base de dados do 
+    Titanic¹ (https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv).</p>
+    '''
+    st.write(text, unsafe_allow_html=True)
+
+    with st.expander('¹Notas sobre o dataset'):
+        st.write(
+        '''
+        <table>
+            <tr><th>COLUNA ORGIGINAL</th><th>COLUNA</th><th>DESCRIÇÃO</th></tr>
+            <tr><td>PassengerId</td><td>id</td><td>O Id do passageiro.</td></tr>
+            <tr><td>Name</td><td>nome</td><td>Nome do passageiro.</td></tr>
+            <tr><td>Survived</td><td>sobreviveu</td><td>Sobreviveu: 0 = Não, 1 = Sim</td></tr>
+            <tr><td>Pclass</td><td>classe</td><td>Classe do Passageiro: 1 = 1a. classe, 2 = 2a classe, 3 = 3a classe</td></tr>
+            <tr><td>Sex</td><td>sexo</td><td>Sexo</td></tr>
+            <tr><td>Age</td><td>idade</td><td>Idade em anos</td></tr>
+            <tr><td>SibSp</td><td>irmaos</td><td># de irmãos/esposa no Titanic.</td></tr>
+            <tr><td>Parch</td><td>pais</td><td># de pais/filhos no Titanic.</td></tr>
+            <tr><td>Ticket</td><td>id_passagem</td><td>Número da passagem.</td></tr>
+            <tr><td>Fare</td><td>tarifa</td><td>Tarifa da passagem.</td></tr>
+            <tr><td>Cabin</td><td>cabine</td><td>Número da cabine</td></tr>
+            <tr><td>Embarked</td><td>embarque</td><td>Local de embarque C = Cherbourg, Q = Queenstown, S = Southampton</td></tr>
+        </table>
+        <br>
+        Notas:<br>
+        Pclass: Classe do navio, relacionada à socio-econômica:<br>
+        1a classe = Classe Alta<br>
+        2a classe = Classe Média<br>
+        3a classe = Classe Baixa<br>
+        Age: Fracionada se for menor que 1. Se estimada, está no formato xx.5<br>
+        Parch: Algumas crianças viajaram com babás, assim este atributo fica zerado para elas (Parch=0).
+        ''', unsafe_allow_html=True)
+
+def ingest_data():
+    df = read_df('titanic')
+    df.rename(columns={
+        'PassengerId':'id','Name':'nome',
+        'Survived':'sobreviveu','Pclass':'classe',
+        'Sex':'sexo','Age':'idade','SibSp':'irmaos',
+        'Parch':'pais','Ticket':'id_passagem',
+        'Fare':'tarifa','Cabin':'cabine','Embarked':'embarque'
+    }, inplace=True)
+    return df
+
+def plot_df(df):
+    st.write('<h2>Dados do Titanic</h2>', unsafe_allow_html=True)
+    st.dataframe(df)
+
+def plot_idade(df):
+    st.markdown('<h2>Gráficos por Idade</h2>', unsafe_allow_html=True)
+    c1, c2 = st.columns([.3,.7])
+    cor = c1.selectbox('Cor', options=['sobreviveu', 'classe', 'sexo', 'embarque'])
+    separar = c1.selectbox('Separar', options=['Não Separar','sobreviveu', 'classe', 'sexo', 'embarque'])
+    facet_col = separar if separar != 'Não Separar' else None 
+    fig = px.histogram(df, x='idade', color=cor, opacity=.75, facet_row=facet_col)
+    c2.plotly_chart(fig)
+
+def build_body():
+    df = ingest_data()
+    plot_df(df)
+    plot_idade(df)
+
+build_header()
+build_body()
