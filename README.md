@@ -1,6 +1,8 @@
 # Teste Streamlit PISI3 - BSI - UFRPE
 por: Gabriel Alves (gabriel.alves@ufrpe.br)
 
+Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE para ensinar o Streamlit.
+
 ## Instalação:
 <ol>
   <li>Instale o python</li>
