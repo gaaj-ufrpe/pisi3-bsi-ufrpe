@@ -1,5 +1,8 @@
+import numpy as np
+import pandas as pd
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 from utils import read_df
 
 def build_header():
@@ -37,32 +40,62 @@ def build_header():
         Parch: Algumas crianças viajaram com babás, assim este atributo fica zerado para elas (Parch=0).
         ''', unsafe_allow_html=True)
 
-def ingest_data():
+def ingest_data() -> pd.DataFrame:
     df = read_df('titanic')
     df.rename(columns={
         'PassengerId':'id','Name':'nome',
-        'Survived':'sobreviveu','Pclass':'classe',
+        'Survived':'sobreviveu_val','Pclass':'classe_val',
         'Sex':'sexo','Age':'idade','SibSp':'irmaos',
         'Parch':'pais','Ticket':'id_passagem',
         'Fare':'tarifa','Cabin':'cabine','Embarked':'embarque'
     }, inplace=True)
     return df
 
-def plot_df(df):
+def transform_data(df:pd.DataFrame) -> pd.DataFrame:
+    df['sobreviveu'] = df['sobreviveu_val'].map({
+        0: 'Não', 1: 'Sim',
+    })
+    df['classe'] = df['classe_val'].map({
+        1: 'Primeira', 2: 'Segunda', 3: 'Terceira',
+    })
+    return df
+
+def plot_df(df:pd.DataFrame):
     st.write('<h2>Dados do Titanic</h2>', unsafe_allow_html=True)
     st.dataframe(df)
 
-def plot_idade(df):
+def plot_idade(df:pd.DataFrame):
     st.markdown('<h2>Gráficos por Idade</h2>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3,.7])
-    cor = c1.selectbox('Cor', options=['sobreviveu', 'classe', 'sexo', 'embarque'])
-    separar = c1.selectbox('Separar', options=['Não Separar','sobreviveu', 'classe', 'sexo', 'embarque'])
-    facet_col = separar if separar != 'Não Separar' else None 
-    fig = px.histogram(df, x='idade', color=cor, opacity=.75, facet_row=facet_col)
+    cols = ['sobreviveu', 'classe', 'sexo', 'embarque']
+    cor_col = c1.selectbox('Cor', options=cols)
+    stacked = c1.checkbox('Stacked', value=True)
+    separar = False
+    fig = None
+    if stacked:
+        separar = c1.selectbox('Separar', options=['Não Separar']+cols)
+        facet_col = separar if separar != 'Não Separar' else None 
+        fig = px.histogram(df, x='idade', color=cor_col, opacity=.75, facet_row=facet_col)
+    else:
+        fig = go.Figure()
+        opacity = 1
+        cor_vals = ordered_vals(df, cor_col)
+        for val in cor_vals:
+            df_aux = df.query(f'{cor_col}==@val').copy()
+            hist = go.Histogram(name=str(val),x=df_aux['idade'], opacity=opacity)
+            fig.add_trace(hist)
+            opacity -= .1
+        fig.update_layout(barmode='overlay', legend_title_text=cor_col)
     c2.plotly_chart(fig)
+
+def ordered_vals(df:pd.DataFrame, col:str) -> list:
+    result = df[['id',col]].groupby(by=col).count()
+    result = result.sort_values(by='id', ascending=False).reset_index().copy()
+    return result[col].to_list()
 
 def build_body():
     df = ingest_data()
+    df = transform_data(df)
     plot_df(df)
     plot_idade(df)
 
