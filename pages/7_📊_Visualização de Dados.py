@@ -65,13 +65,15 @@ def plot_df(df:pd.DataFrame):
     st.dataframe(df)
 
 def plot_idade(df:pd.DataFrame):
-    st.markdown('<h2>Dados Relativos à idade</h2>', unsafe_allow_html=True)
+    st.markdown('<h2>Gráficos Relativos à idade</h2>', unsafe_allow_html=True)
+    plot_histograma_idade(df)
+    plot_boxplot_idade(df)
 
-def plot_histograma(df:pd.DataFrame, container):
+def plot_histograma_idade(df:pd.DataFrame):
     st.markdown('<h3>Histograma</h3>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3,.7])
     cols = ['sobreviveu', 'classe', 'sexo', 'embarque']
-    serie_col = c1.selectbox('Série', options=cols)
+    serie_col = c1.selectbox('Série*', options=cols, key='serie_1')
     stacked = c1.checkbox('Stacked', value=True)
     separar = False
     fig = None
@@ -96,11 +98,11 @@ def ordered_vals(df:pd.DataFrame, col:str) -> list:
     result = result.sort_values(by='id', ascending=False).reset_index().copy()
     return result[col].to_list()
 
-def plot_boxplot(df:pd.DataFrame):
+def plot_boxplot_idade(df:pd.DataFrame):
     st.markdown('<h3>Diagrama de Caixa (<i>Boxplot</i>)</h3>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3,.7])
     cols = ['sobreviveu', 'classe', 'sexo', 'embarque']
-    serie_col = c1.selectbox('Série', options=cols)
+    serie_col = c1.selectbox('Série*', options=cols, key='serie_2')
     inverter = c1.checkbox('Inverter Eixos', True)
     cols = [serie_col, 'idade']
     if inverter:
@@ -109,12 +111,17 @@ def plot_boxplot(df:pd.DataFrame):
     fig = px.box(df_plot,x=cols[0],y=cols[1])
     c2.plotly_chart(fig)
 
+    st.text('''
+    *Estes elementos de input tÊm os mesmos valores e mesmo nome. Por isso, é necessario informar 
+    o atributo "key" destes elementos com valores diferentes. Caso contrário, o streamlit entende que 
+    o mesmo componente está sendo inserido duas vezes na mesma página, dando um erro.
+    ''')
+
 def build_body():
     df = ingest_data()
     df = transform_data(df)
     plot_df(df)
     plot_idade(df)
-    plot_boxplot(df)
 
 build_header()
 build_body()
