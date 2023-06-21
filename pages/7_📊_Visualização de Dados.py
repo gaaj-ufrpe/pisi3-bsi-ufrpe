@@ -65,27 +65,30 @@ def plot_df(df:pd.DataFrame):
     st.dataframe(df)
 
 def plot_idade(df:pd.DataFrame):
-    st.markdown('<h2>Gráficos por Idade</h2>', unsafe_allow_html=True)
+    st.markdown('<h2>Dados Relativos à idade</h2>', unsafe_allow_html=True)
+
+def plot_histograma(df:pd.DataFrame, container):
+    st.markdown('<h3>Histograma</h3>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3,.7])
     cols = ['sobreviveu', 'classe', 'sexo', 'embarque']
-    cor_col = c1.selectbox('Cor', options=cols)
+    serie_col = c1.selectbox('Série', options=cols)
     stacked = c1.checkbox('Stacked', value=True)
     separar = False
     fig = None
     if stacked:
         separar = c1.selectbox('Separar', options=['Não Separar']+cols)
         facet_col = separar if separar != 'Não Separar' else None 
-        fig = px.histogram(df, x='idade', color=cor_col, opacity=.75, facet_row=facet_col)
+        fig = px.histogram(df, x='idade', color=serie_col, opacity=.75, facet_row=facet_col)
     else:
         fig = go.Figure()
         opacity = 1
-        cor_vals = ordered_vals(df, cor_col)
-        for val in cor_vals:
-            df_aux = df.query(f'{cor_col}==@val').copy()
+        serie_vals = ordered_vals(df, serie_col)
+        for val in serie_vals:
+            df_aux = df.query(f'{serie_col}==@val').copy()
             hist = go.Histogram(name=str(val),x=df_aux['idade'], opacity=opacity)
             fig.add_trace(hist)
             opacity -= .1
-        fig.update_layout(barmode='overlay', legend_title_text=cor_col)
+        fig.update_layout(barmode='overlay', legend_title_text=serie_col)
     c2.plotly_chart(fig)
 
 def ordered_vals(df:pd.DataFrame, col:str) -> list:
@@ -93,11 +96,25 @@ def ordered_vals(df:pd.DataFrame, col:str) -> list:
     result = result.sort_values(by='id', ascending=False).reset_index().copy()
     return result[col].to_list()
 
+def plot_boxplot(df:pd.DataFrame):
+    st.markdown('<h3>Diagrama de Caixa (<i>Boxplot</i>)</h3>', unsafe_allow_html=True)
+    c1, c2 = st.columns([.3,.7])
+    cols = ['sobreviveu', 'classe', 'sexo', 'embarque']
+    serie_col = c1.selectbox('Série', options=cols)
+    inverter = c1.checkbox('Inverter Eixos', True)
+    cols = [serie_col, 'idade']
+    if inverter:
+        cols.reverse()
+    df_plot = df[cols]
+    fig = px.box(df_plot,x=cols[0],y=cols[1])
+    c2.plotly_chart(fig)
+
 def build_body():
     df = ingest_data()
     df = transform_data(df)
     plot_df(df)
     plot_idade(df)
+    plot_boxplot(df)
 
 build_header()
 build_body()
