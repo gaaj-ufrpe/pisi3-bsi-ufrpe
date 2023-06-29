@@ -94,34 +94,30 @@ def plot_histograma_idade(df:pd.DataFrame):
     title = f'Histograma de "{series_col}" por faixa etária{complemento_titulo}.'
     xtitle ='Idade'
     ytitle='Qtd.'
-
-    fig = None
     if stacked:
         fig = create_histograma_stacked(df, series_col, facet_col, color_sequence, title, xtitle, ytitle)
     else:
         fig = create_histograma_unstacked(df, series_col, facet_col, color_sequence, title, xtitle, ytitle)
-
     c2.plotly_chart(fig, use_container_width=True)
 
-def create_histograma_stacked(df:pd.DataFrame, series_col:str, facet_col:str, color_sequence, title: str, xtitle: str, ytitle: str):
+def create_histograma_stacked(df:pd.DataFrame, series_col:str, facet_col:str, color_sequence, title: str, xtitle: str, ytitle: str) -> go.Figure:
     if facet_col == 'Não Separar':
         order = [series_col]
         query_start = ''
     else:
         order = [series_col, facet_col]
         query_start = f'{facet_col}.notna() and'
-
     query = f'{query_start} {series_col}.notna()'
     df = df.query(query).copy()
     df.sort_values(by=order, inplace=True)
     fig = px.histogram(df, x='idade', nbins=20, color=series_col, opacity=.75, facet_row=facet_col,
-        facet_row_spacing=.15, color_discrete_sequence=color_sequence, )
+        facet_row_spacing=.15, color_discrete_sequence=color_sequence)
     fig.update_layout(title=title, legend_title_text=series_col)
     fig.update_xaxes(title_text=xtitle)
     fig.update_yaxes(title_text=ytitle)
     return fig
 
-def create_histograma_unstacked(df:pd.DataFrame, series_col:str, facet_col:str, color_sequence, title: str, xtitle: str, ytitle: str):
+def create_histograma_unstacked(df:pd.DataFrame, series_col:str, facet_col:str, color_sequence, title: str, xtitle: str, ytitle: str) -> go.Figure:
     # em alguns casos, pode ser interessante ou mesmo necessário usar a api graph objects do plotly: https://plotly.com/python/graph-objects/
     # esta api se baseia na inclusão de 'traces' sobre uma figura. ademais, propriedades e eixos da figura e dos traces podem ser customizados
     # apesar de mais complexo, o uso destes elementos diretamente permite que cada elemetno do gráfico seja ajustado individualmente.
