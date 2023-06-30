@@ -11,7 +11,7 @@ def build_page():
     build_body()
 
 def build_header():
-    st.write('<h1>Criação de Subplots</h1>', unsafe_allow_html=True)
+    st.write('<h1>Subplots com a base do Titanic</h1>', unsafe_allow_html=True)
 
 def build_body():
     df = read_titanic_df()

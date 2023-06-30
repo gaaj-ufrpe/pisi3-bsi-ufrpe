@@ -10,7 +10,7 @@ def build_page():
     build_body()
 
 def build_header():
-    text ='<h1>Visualização de Dados (Dataviz)</h1>'+\
+    text ='<h1>Plots com a base do Titanic</h1>'+\
     '<p>Esta página apresenta alguns gráficos a partir da base de dados do '+\
     'Titanic¹ (https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv).</p>'
     st.write(text, unsafe_allow_html=True)
