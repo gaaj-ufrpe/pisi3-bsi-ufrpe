@@ -47,7 +47,7 @@ def faixa_etaria(idade:int) -> str:
     return result
 
 def build_bubble_section(df:pd.DataFrame):
-    st.markdown('<h3>Scatter</h3>', unsafe_allow_html=True)
+    st.markdown('<h3>Bubble</h3>', unsafe_allow_html=True)
     df_aux = df[['sexo','classe','idade','sobreviveu','id']].copy()
     df_aux['faixa_etaria'] = df_aux['idade'].apply(faixa_etaria)
     df_aux.drop('idade',axis=1,inplace=True)
