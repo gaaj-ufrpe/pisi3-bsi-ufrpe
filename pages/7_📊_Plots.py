@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -37,7 +38,9 @@ def build_scatter_section(df:pd.DataFrame):
 
 def faixa_etaria(idade:int) -> str:
     result = '60+'
-    if idade < 60:
+    if idade is None or np.isnan(idade):
+        result = None
+    elif idade < 60:
         first = int(f'{int(idade/10)}0')
         second = first+9
         result = f'{first}-{second}'
@@ -48,20 +51,20 @@ def build_bubble_section(df:pd.DataFrame):
     df_aux = df[['sexo','classe','idade','sobreviveu','id']].copy()
     df_aux['faixa_etaria'] = df_aux['idade'].apply(faixa_etaria)
     df_aux.drop('idade',axis=1,inplace=True)
-    df_aux = df_aux.groupby(by=['sexo','classe','sobreviveu','faixa_etaria']).count().\
-        reset_index().sort_values(by=['sexo','classe'], ascending=[False, True])
-    df_aux['sobreviveu'] = df_aux['sobreviveu'].map({'Não':'vivos','Sim':'mortos'})
+    df_aux = df_aux.groupby(by=['sexo','classe','sobreviveu','faixa_etaria']).count().reset_index()
+    df_aux['sobreviveu'] = df_aux['sobreviveu'].map({'Não':'mortos','Sim':'vivos'})
     df_aux.rename(columns={'id':'qtd'},inplace=True)
-    df_aux = df_aux.pivot(index=['sexo','classe','faixa_etaria'], columns='sobreviveu', values='qtd').reset_index()
+    df_aux = df_aux.pivot(index=['sexo','classe','faixa_etaria'], 
+                          columns='sobreviveu', values='qtd').reset_index().\
+                    sort_values(by=['sexo','classe'], ascending=[False, True])
     df_aux.fillna(0, inplace=True)
-    print(df_aux)
     df_aux['qtd'] = df_aux['vivos'] + df_aux['mortos']
     fig = px.scatter(df_aux, x='vivos', y='mortos', text='faixa_etaria',
-                     color='sexo', symbol='classe', size='qtd', size_max=60, opacity=.75, 
+                     color='sexo', symbol='classe', size='qtd', size_max=80, opacity=.75, 
                      color_discrete_sequence=['#99ccff','#ffb3b3'],
                      symbol_sequence=['circle','square','triangle-down'])
     st.plotly_chart(fig, use_container_width=True)
-
+    
 def build_histograma_section(df:pd.DataFrame):
     st.markdown('<h3>Histograma</h3>', unsafe_allow_html=True)
     c1, c2 = st.columns([.3,.7])
@@ -124,12 +127,10 @@ def build_boxplot_section(df:pd.DataFrame):
     df_plot = df[cols]
     fig = px.box(df_plot,x=cols[0],y=cols[1])
     c2.plotly_chart(fig, use_container_width=True)
-
     st.text('''
     *Estes elementos de input tÊm os mesmos valores e mesmo nome. Por isso, é necessario informar 
     o atributo "key" destes elementos com valores diferentes. Caso contrário, o streamlit entende que 
     o mesmo componente está sendo inserido duas vezes na mesma página, dando um erro.
     ''')
-
 
 build_page()
