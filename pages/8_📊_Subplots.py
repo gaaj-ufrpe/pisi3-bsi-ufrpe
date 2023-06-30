@@ -62,16 +62,8 @@ def plot_histogramas_go(container, col_linhas, col_colunas, disposicao, df_aux):
                                text=f'{col_linhas}: {linha_val} & {col_colunas}: {col_val}', row=ridx, col=cidx)
             fig.update_xaxes(matches='x', row=ridx, col=cidx)
             fig.update_yaxes(title='', matches='y', row=ridx, col=cidx)
-            
     fig.update_layout(barmode=disposicao, title=f'Subplots de mortes ({col_linhas} X {col_colunas}) com "Graph Objects"', legend_title_text='Sobreviveu')
-    # fig = px.histogram(df_aux, x='idade', nbins=20, opacity=.75,
-    #     color='sobreviveu', color_discrete_sequence=['#ff6666','#66ff66'],
-    #     facet_row=col_linhas, facet_row_spacing=.15,
-    #     facet_col=col_colunas, facet_col_spacing=.15, )
     container.plotly_chart(fig, use_container_width=True)
-    # fig.update_layout(title=title, legend_title_text=series_col)
-    # fig.update_xaxes(title_text=xtitle)
-    # fig.update_yaxes(title_text=ytitle)
 
 def add_subplot_histograma(col_linhas, col_colunas, col_linhas_val, col_colunas_val, df, fig, row_idx, col_idx, showlegend):
     query = f'{col_linhas}=="{col_linhas_val}" and {col_colunas}=="{col_colunas_val}"'
@@ -84,56 +76,4 @@ def add_subplot_histograma(col_linhas, col_colunas, col_linhas_val, col_colunas_
                           marker={'color': '#66ff66', 'opacity':.75}, legendgroup='Sim', showlegend=showlegend)
     fig.add_trace(subfig, row=row_idx, col=col_idx)
 
-
-#                 hist = go.Histogram(name=str_series, x=df_aux['idade'], 
-#                                     xbins=dict(start=0,end=80,size=5), legendgroup=val, showlegend=showlegend,
-#                                     marker={'color': color, 'opacity':opacity})
-
 build_page()
-
-
-
-# def create_histograma_unstacked(df:pd.DataFrame, series_col:str, facet_col:str, color_sequence, title: str, xtitle: str, ytitle: str) -> go.Figure:
-#     # em alguns casos, pode ser interessante ou mesmo necessário usar a api graph objects do plotly: https://plotly.com/python/graph-objects/
-#     # esta api se baseia na inclusão de 'traces' sobre uma figura. ademais, propriedades e eixos da figura e dos traces podem ser customizados
-#     # apesar de mais complexo, o uso destes elementos diretamente permite que cada elemetno do gráfico seja ajustado individualmente.
-#     if facet_col is None:
-#         facets = ['']
-#         query_start = ''
-#     else:
-#         facets = ordered_vals(df,facet_col)
-#         query_start = f'{facet_col}==@facet and'
-#     facets_len = len(facets)
-#     fig = make_subplots(facets_len, 1, vertical_spacing=.3, x_title=xtitle, y_title=ytitle)
-#     series_vals = ordered_vals(df, series_col)
-#     series_color = {}
-#     row_idx = 0
-#     for facet in facets:
-#         row_idx += 1
-#         color_idx = 0
-#         for val in series_vals:
-#             query = f'{query_start} {series_col}==@val'
-#             df_aux = df.query(query).copy()
-#             if len(df_aux)!=0:
-#                 opacity = .5 * (1+color_idx/10)
-#                 str_series = str(val)
-#                 #showlegend e o legendgroup são usados para mostrar apenas a legenda da primeira linha
-#                 #e permitir que a interação com a legenda altere o estado de todos os subplots
-#                 if str_series in series_color.keys():
-#                     color = series_color[str_series] 
-#                     showlegend = False
-#                 else:
-#                     color = f'{color_sequence[color_idx]}'
-#                     series_color[str_series] = color
-#                     showlegend = True
-#                 hist = go.Histogram(name=str_series, x=df_aux['idade'], 
-#                                     xbins=dict(start=0,end=80,size=5), legendgroup=val, showlegend=showlegend,
-#                                     marker={'color': color, 'opacity':opacity})
-#                 fig.add_trace(hist, row=row_idx, col=1)
-#                 fig.add_annotation(xref='x domain',yref='y domain',x=0, y=1.1, showarrow=False,
-#                                 text=f'{facet_col}: {facet}', row=row_idx, col=1)
-#                 fig.update_xaxes(matches='x', row=row_idx, col=1)
-#                 fig.update_yaxes(title='', matches='y', row=row_idx, col=1)
-#                 color_idx += 1
-#     fig.update_layout(barmode='overlay', title=title, legend_title_text=series_col)
-    # return fig
