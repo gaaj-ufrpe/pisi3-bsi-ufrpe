@@ -8,7 +8,7 @@ from sklearn.base import TransformerMixin
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder, StandardScaler
 
-color_scale = ['#00ccff','#cc00ff','#ffcc00','#66ccff','#cc66ff','#ffcc66']
+color_scale = ['#00ccff','#cc00ff','#ffcc00','#0066bb','#6600bb','#bb0066','#bb6600','#ff0066','#66ff66','#ee0503']
 n_clusters = 3
 clustering_cols = ['idade','tarifa','classe','sexo','sobreviveu']
 
@@ -18,13 +18,19 @@ def build_page():
 
 def build_header():
     st.write('<h1>Agrupamento (<i>Clustering</i>) com a base do Titanic</h1>', unsafe_allow_html=True)
+    st.write('''<i>Ao utilizar apenas as colunas de idade e tarifa na clusterização com 3 grupos, 
+a normalização padrão (que considera o desvio padrão dos valores em torno da média) pareceu 
+fornecer grupos mais coesos (https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). 
+Veja os grupos formados e observe que sem a normalização, o KMeans considerou muito fortemente a tarifa, 
+enquanto que com a normalização minmax, o resultado considera muito fortemente a idade. Por outro lado,
+a normalização padrão pareceu levar em consideração ambas colunas com pesos equivalentes.
+</i>''', unsafe_allow_html=True)
 
 def build_body():
     global n_clusters, clustering_cols
     c1, c2 = st.columns(2)
     clustering_cols = c1.multiselect('Colunas', options=clustering_cols,  default=clustering_cols[0:2])
     n_clusters = c2.slider('Quantidade de Clusters', min_value=2, max_value=10, value=3)
-
     dfs = create_dfs()
     for df, title, desc in dfs.values():
         plot_dataframe(df, title, desc)
@@ -36,13 +42,6 @@ def build_body():
     }
     for col, name in clusters.items():
         plot_cluster(df_clusters, col, name)
-    st.write('''<i>Ao utilizar apenas as colunas de idade e tarifa na clusterização com 3 grupos, 
-a normalização padrão (que considera o desvio padrão dos valores em torno da média) pareceu 
-fornecer grupos mais coesos (https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). 
-Veja os grupos formados e observe que sem a normalização, o KMeans considerou muito fortemente a tarifa, 
-enquanto que com a normalização minmax, o resultado considera muito fortemente a idade. Por outro lado,
-a normalização padrão pareceu levar em consideração ambas colunas com pesos equivalentes.
-</i>''')
 
 def create_dfs():
     cols = ['id','idade','tarifa','sobreviveu_val','classe_val','sexo']
