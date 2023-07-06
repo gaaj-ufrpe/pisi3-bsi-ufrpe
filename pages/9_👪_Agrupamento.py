@@ -22,7 +22,7 @@ def build_header():
 a normalização padrão (que considera o desvio padrão dos valores em torno da média) pareceu 
 fornecer grupos mais coesos (https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). 
 Veja os grupos formados e observe que sem a normalização, o KMeans considerou muito fortemente a tarifa, 
-enquanto que com a normalização minmax, o resultado considera muito fortemente a idade. Por outro lado,
+enquanto que com a normalizaç0ão minmax, o resultado considera muito fortemente a idade. Por outro lado,
 a normalização padrão pareceu levar em consideração ambas colunas com pesos equivalentes.
 </i>''', unsafe_allow_html=True)
 
@@ -30,6 +30,9 @@ def build_body():
     global n_clusters, clustering_cols
     c1, c2 = st.columns(2)
     clustering_cols = c1.multiselect('Colunas', options=clustering_cols,  default=clustering_cols[0:2])
+    if len(clustering_cols) < 2:
+        st.error('É preciso selecionar pelo menos 2 colunas.')
+        return
     n_clusters = c2.slider('Quantidade de Clusters', min_value=2, max_value=10, value=3)
     dfs = create_dfs()
     for df, title, desc in dfs.values():
@@ -72,34 +75,30 @@ def create_df_encoded(df: pd.DataFrame) -> pd.DataFrame:
 def create_df_clusters(df_enc:pd.DataFrame) -> pd.DataFrame:
     #Colunas de id não devem ser utilizas para a clusterização, uma vez que não possuem sentido semântico.
     #Caso sejam incluídas, elas irão interferir nos elementos incluídos em cada cluster.
-    scaling_cols = ['idade','tarifa']
-    df_cluster_base = clusterize(df_enc, 'cluster')
-    df_standard = clusterize(df_enc, 'cluster_standard', scaling_cols, StandardScaler())
-    df_minmax = clusterize(df_enc, 'cluster_minmax', scaling_cols, MinMaxScaler())
     df_clusters = df_enc.copy()
-    df_clusters['cluster'] = df_cluster_base['cluster']
-    df_clusters['cluster_standard'] = df_standard['cluster_standard']
-    df_clusters['cluster_minmax'] = df_minmax['cluster_minmax']
+    df_clusters['cluster'] = clusterize(df_enc)
+    df_clusters['cluster_standard'] = clusterize(df_enc, StandardScaler())
+    df_clusters['cluster_minmax'] = clusterize(df_enc, MinMaxScaler())
     return df_clusters
 
-def clusterize(df: pd.DataFrame, col_cluster:str, cols_scaling:list[str]=None, scaler:TransformerMixin=None) -> pd.DataFrame:
+def clusterize(df: pd.DataFrame, scaler:TransformerMixin=None) -> pd.DataFrame:
     df_result = df[clustering_cols].copy()
     if scaler is not None:
-        df_result = scale(df_result, col_cluster, cols_scaling, scaler)
+        df_result = scale(df_result, scaler)
     X = df_result.values
     # O random_state seta o valor inicial do centroid dos clusters.
     # Ele é configurado para que os mesmos valores sejam atribuidos aos clusters a cada execução.
     # Teste com o valor 4294967295 e 12345 e veja que, apesar de todos os registros permanecerem 
     # nos mesmos clusters, o número atribuído a cada cluster é alterado.
     kmeans = KMeans(n_clusters=n_clusters, n_init=10, random_state=4294967295)
-    df_result[col_cluster] = kmeans.fit_predict(X)
-    return df_result
+    return kmeans.fit_predict(X)
 
-def scale(df:pd.DataFrame, col_cluster:str, cols:list[str], scaler:TransformerMixin):
-    for c in cols:
+def scale(df:pd.DataFrame, scaler:TransformerMixin):
+    scaling_cols = [x for x in ['idade','tarifa'] if x in clustering_cols]
+    for c in scaling_cols:
         vals = df[[c]].values
-        df[f'{c}_{col_cluster}'] = scaler.fit_transform(vals)
-    return df.drop(columns=cols)
+        df[c] = scaler.fit_transform(vals)
+    return df
 
 def plot_dataframe(df, title, desc):
     with st.expander(title):
