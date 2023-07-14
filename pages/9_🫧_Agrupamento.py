@@ -10,7 +10,8 @@ from sklearn.preprocessing import MinMaxScaler, LabelEncoder, StandardScaler
 
 color_scale = ['#00ccff','#cc00ff','#ffcc00','#0066bb','#6600bb','#bb0066','#bb6600','#ff0066','#66ff66','#ee0503']
 n_clusters = 3
-clustering_cols = ['idade','tarifa','classe','sexo','sobreviveu']
+clustering_cols_opts = ['idade','tarifa','classe','sexo','sobreviveu']
+clustering_cols = clustering_cols_opts.copy()
 
 def build_page():
     build_header()
@@ -29,7 +30,7 @@ a normalização padrão pareceu levar em consideração ambas colunas com pesos
 def build_body():
     global n_clusters, clustering_cols
     c1, c2 = st.columns(2)
-    clustering_cols = c1.multiselect('Colunas', options=clustering_cols,  default=clustering_cols[0:2])
+    clustering_cols = c1.multiselect('Colunas', options=clustering_cols_opts,  default=clustering_cols_opts[0:2])
     if len(clustering_cols) < 2:
         st.error('É preciso selecionar pelo menos 2 colunas.')
         return
