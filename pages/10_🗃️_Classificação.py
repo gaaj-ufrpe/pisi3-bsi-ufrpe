@@ -65,10 +65,10 @@ class Classifiers(Enum):
                  ''', unsafe_allow_html=True)
         c1, _, c2 = st.columns([.49,.02,.49])
         with c1:
-            self.report('TREINO', '<div style="color: red; font-size: 1.5em">Vc <b style="font-size: 1.5em">testou</b> com o conjunto de <b style="font-size: 1.5em">treino</b>. Passe no RH!!!</div>', 
+            self.report('TREINO', '<div style="color: red; font-size: 1.5em">Treino é treino!</div>', 
                         y_train, y_train_pred, caracteristicas, classe)
         with c2:
-            self.report('TESTE', '<div style="font-family: cursive; font-size: 1.1em">Parabéns, vc <b style="font-size: 1.5em">testou</b> com o conjunto de <b style="font-size: 1.5em">teste</b>. Tá vendo que não é difícil?!</div>', 
+            self.report('TESTE', '<div style="font-family: cursive; font-size: 1.1em">Jogo é jogo!</div>', 
                         y_test, y_test_pred, caracteristicas, classe)
 
     def report(self, title, desc, y_true, y_pred, caracteristicas, classe):
