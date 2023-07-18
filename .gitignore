@@ -1,2 +1,6 @@
+*.pyc
+__pycache__
 .history
-venv
+*.html
+venv/
+venv/*
