@@ -1,93 +1,75 @@
 from enum import Enum
-from sklearn.base import TransformerMixin
-from sklearn.preprocessing import MinMaxScaler, LabelEncoder, OneHotEncoder, StandardScaler
-from sklearn.compose import make_column_transformer
+from typing import Union
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler, OrdinalEncoder, OneHotEncoder, StandardScaler
+from sklearn.compose import make_column_transformer
 
-class Encoders(Enum):
-    LABEL = 'Label Encoder',
-    ONE_HOT = 'One-Hot Encoder'
+SupportedScaler = Union[StandardScaler,MinMaxScaler]
+SupportedEncoder = Union[OrdinalEncoder,OneHotEncoder]
 
-    def __init__(self, description):
+class ScalerType(Enum):
+    STANDARD = 'Padrão (Z-Score)', lambda: StandardScaler(), 
+    MINMAX = 'Normalização Min-Max', lambda: MinMaxScaler()
+
+    def __init__(self, description:str, builder:callable):
        self.description = description
+       self.builder = builder
 
     @classmethod
     def values(self):
-        return [x.description for x in Encoders]
-
-    @classmethod
-    def get(self, description):
-        result =  [x for x in Encoders if x.description == description]
-        return None if len(result) == 0 else result[0]
-
-    def create_encoder(self) -> TransformerMixin:
-        if self == Encoders.ONE_HOT:
-            return OneHotEncoder()
-        elif self == Encoders.LABEL:
-            return LabelEncoder()
-        else:
-            raise TypeError('Tipo de encoder não suportado.')
-    
-    def fit_transform(self, df:pd.DataFrame, cols:list[str]) -> pd.DataFrame:
-        if self == Encoders.ONE_HOT:
-            return self.__one_hot_transform(df, cols)
-        elif self == Encoders.LABEL:
-            return self.__label_transform(df, cols)
-        else:
-            raise TypeError('Tipo de encoder não suportado.')
-        
-    def __one_hot_transform(self, df, cols):
-        encoders = [(self.create_encoder(), [col]) for col in cols]
-        transformer = make_column_transformer(
-            *encoders,
-            remainder='passthrough'
-        )
-        transformer = transformer.fit(df)
-        result = pd.DataFrame(transformer.transform(df),
-                           columns=transformer.get_feature_names_out())
-        return result
-
-    def __label_transform(self, df:pd.DataFrame, cols:list[str]):
-        for c in cols:
-            df[c] = LabelEncoder().fit_transform(df[[c]])
-        return df
-    
-    def __str__(self) -> str:
-        return self.description
-    
-class Scalers(Enum):
-    STANDARD = 'Padrão (Z-Score)', 
-    MINMAX = 'Normalização Min-Max'
-
-    def __init__(self, description):
-       self.description = description
-
-    @classmethod
-    def values(self):
-        return [x.description for x in Scalers]
+        return [x.description for x in ScalerType]
 
     @classmethod
     def get(self, description:str):
-        result =  [x for x in Scalers if x.description == description]
+        result =  [x for x in ScalerType if x.description == description]
         return None if len(result) == 0 else result[0]
-
-    def create_scaler(self) -> TransformerMixin:
-        if self == Scalers.STANDARD:
-            return StandardScaler()
-        elif self == Scalers.MINMAX:
-            return MinMaxScaler()
-        else:
-            raise TypeError('Tipo de scaler não suportado.')
     
-    def fit_transform(self, df:pd.DataFrame, col:str) -> pd.DataFrame:
-        #observe que para os scalers precisa do reshape, mas para os encoders não.
-        vals = df[col].to_numpy().reshape(-1,1)
-        scaler = self.create_scaler()
-        vals_enc = scaler.fit_transform(vals)
-        df_scaled = pd.DataFrame(vals_enc, columns=[col])
-        df[col] = df_scaled[col]
-        return df
+    def build(self) -> SupportedScaler:
+        return self.builder()
 
     def __str__(self) -> str:
         return self.description
 
+class EncoderType(Enum):
+    LABEL = 'Ordinal Encoder', lambda: OrdinalEncoder(),
+    ONE_HOT = 'One-Hot Encoder', lambda: OneHotEncoder()
+
+    def __init__(self, description:str, builder:callable):
+       self.description = description
+       self.builder = builder
+
+    @classmethod
+    def values(self):
+        return [x.description for x in EncoderType]
+
+    @classmethod
+    def get(self, description:str):
+        result =  [x for x in EncoderType if x.description == description]
+        return None if len(result) == 0 else result[0]
+
+    def build(self) -> SupportedEncoder:
+        return self.builder()
+
+    def __str__(self) -> str:
+        return self.description
+
+class Transformer:
+    def __init__(self, df:pd.DataFrame, encode:list[str], scale:list[str], encoderType:EncoderType, scalerType:ScalerType):
+        encoders = [(encoderType.build(), [col]) for col in encode]
+        scalers = [(scalerType.build(), [col]) for col in scale]
+        transformers = encoders + scalers
+        transformer = make_column_transformer(
+            *transformers,
+            remainder='passthrough'
+        )
+        self.transformer = transformer.fit(df)
+    
+    def transform(self, df:pd.DataFrame) -> pd.DataFrame:
+        return pd.DataFrame(self.transformer.transform(df),
+                           columns=self.transformer.get_feature_names_out())
+    
+    #TODO conferir se precisa mudar o transformer para o LabelEncoder
+    # def __label_transform(self, df:pd.DataFrame):
+    #     for c in df.columns:
+    #         df[c] = LabelEncoder().fit_transform(df[c].to_numpy())
+    #     return df

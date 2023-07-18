@@ -45,7 +45,8 @@ def plot_histogramas_px(container, col_linhas, col_colunas, disposicao, df_aux):
         color='sobreviveu', color_discrete_sequence=['#ff6666','#66ff66'],
         facet_row=col_linhas, facet_row_spacing=.15,
         facet_col=col_colunas, facet_col_spacing=.15, )
-    fig.update_layout(barmode=disposicao, title=f'Subplots de mortes ({col_linhas} X {col_colunas}) com "Plotly Express"', legend_title_text='Sobreviveu')
+    fig.update_layout(barmode=disposicao, legend_title_text='Sobreviveu', height=600,
+                      title=f'Subplots de mortes ({col_linhas} X {col_colunas}) com "Plotly Express"', )
     container.plotly_chart(fig, use_container_width=True)
     
 def plot_histogramas_go(container, col_linhas, col_colunas, disposicao, df_aux):
@@ -58,10 +59,11 @@ def plot_histogramas_go(container, col_linhas, col_colunas, disposicao, df_aux):
             cidx = col_idx+1
             showlegend = (ridx==1 and cidx==1)
             add_subplot_histograma(col_linhas, col_colunas, linha_val, col_val, df_aux, fig, ridx, cidx, showlegend)
-            fig.add_annotation(xref='x domain',yref='y domain', x=0, y=1.2, showarrow=False,
+            fig.add_annotation(xref='x domain',yref='y domain', x=0, y=1.3, showarrow=False,
                                text=f'{col_linhas}: {linha_val} & {col_colunas}: {col_val}', row=ridx, col=cidx)
             fig.update_xaxes(matches='x', row=ridx, col=cidx)
             fig.update_yaxes(title='', matches='y', row=ridx, col=cidx)
+            fig.update_layout(height=600)
     fig.update_layout(barmode=disposicao, title=f'Subplots de mortes ({col_linhas} X {col_colunas}) com "Graph Objects"', legend_title_text='Sobreviveu')
     container.plotly_chart(fig, use_container_width=True)
 
