@@ -1,7 +1,7 @@
 # PISI3 - BSI - UFRPE
 por: Gabriel Alves (gabriel.alves@ufrpe.br)
 
-Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE para ensinar o Streamlit.
+Este projeto é utilizado para as aulas da disciplina de Projeto Interdisciplinar para Sistemas de Informação 3 (pisi3), do 3° período do curso de Bacharelado em Sistemas de Informação (BSI) da sede, da Universidade Federal Rural de Pernambuco (UFRPE).
 
 ## Instalação:
 <ol>
@@ -22,7 +22,7 @@ Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE p
   </li>
 
   <li>Execute:
-    <code>streamlit run app.py</code>
+    <code>streamlit run Home.py</code>
   </li>
 </ol>
 
@@ -30,8 +30,8 @@ Este projeto é utilizado para as aulas da disciplina de pisi3 do BSI da UFRPE p
 
 Este projeto tem 3 branches com códigos distintos:
 <ol>
-  <li>main: código inicial com o uso básico do streamlit. Possui uma caixa de texto e exibe uma mensagem ao preenchê-la.</li>
+  <li>main: código com várias funcionalidades diferentes: sidebar, pandas, arquivos parquet, ydata-profile, clusterização etc.</li>
+  <li>basics: código inicial com o uso básico do streamlit. Possui uma caixa de texto e exibe uma mensagem ao preenchê-la.</li>
   <li>theme: código para mostrar como funciona o uso de temas no streamlit.</li>
-  <li>profile: código com várias funcionalidades diferentes, desde o uso do sidebar até instruções de como utilizar arquivos parquet e o ydata-profile.</li>
 </ol>
-Disponível em: https://gaaj-ufrpe-teste-streamlit-home-profile-igxpg2.streamlit.app/
+Disponível em: https://gaaj-pisi3-bsi-ufrpe.streamlit.app/
