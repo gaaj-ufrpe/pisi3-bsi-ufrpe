@@ -18,7 +18,7 @@ st.markdown(f'''
     <br>
     Este projeto tem o objetivo de prover vários exemplos úteis para os projetos que serão desenvolvidos na disicplina de 
     Projeto Interdisciplinar para Sistemas de Informação 3 (PISI3) do 3° período do curso de Bacharelado em Sistemas de Informação
-    (BSI) da Universidade Federal Rural de Pernambuco (UFRPE).
+    (BSI) da Sede da Universidade Federal Rural de Pernambuco (UFRPE).
     <br>
     Alguns dos exemplos são:
     <ul>
