@@ -1,0 +1,1 @@
+print('asdasd %s' % 'asd')
