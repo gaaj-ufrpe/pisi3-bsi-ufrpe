@@ -6,6 +6,7 @@ FROM python:3.11
 RUN python -m pip install --upgrade pip
 COPY . .
 #requirements
+RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt --upgrade 
 #streamlit
 EXPOSE 8501
