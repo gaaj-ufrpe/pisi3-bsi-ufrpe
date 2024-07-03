@@ -6,14 +6,11 @@ FROM python:3.11
 RUN python -m pip install --upgrade pip
 #app
 WORKDIR /home/app
-COPY .streamlit .streamlit 
 COPY data data
 COPY pages pages
 COPY reports reports
 COPY requirements.txt .
 COPY *.py ./
-
-
 #requirements
 RUN pip install -r requirements.txt --upgrade 
 #streamlit
